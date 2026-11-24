@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f8f4">
+  <meta name="description" content="MediCare — दवा के समय, परिवार की देखभाल और रोज़ की सेहत को व्यवस्थित रखने वाला आपका health companion.">
+  <title>MediCare — आपकी सेहत का साथी</title>
+  <link rel="icon" href="assets/medicare-logo.png" type="image/png">
+  <style>
+    :root {
+      --ink: #143e3b;
+      --ink-2: #526a66;
+      --green: #0c8b7b;
+      --green-dark: #096f63;
+      --mint: #e6f4ee;
+      --paper: #f5f8f4;
+      --white: #fff;
+      --line: #dce8e1;
+      --orange: #f4b45f;
+      --shadow: 0 24px 70px rgba(20, 62, 59, .10);
+      --radius: 26px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 92px; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font: 16px/1.65 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    a { color: inherit; }
+    button { font: inherit; }
+    .wrap { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+    .topbar {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(245, 248, 244, .88);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(220, 232, 225, .8);
+    }
+    .nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; text-decoration: none; font-weight: 850; font-size: 1.22rem; letter-spacing: -.04em; }
+    .brand img { width: 42px; height: 42px; object-fit: contain; border-radius: 13px; }
+    .brand small { display: block; color: var(--ink-2); font-size: .58rem; letter-spacing: .18em; line-height: 1.1; font-weight: 700; }
+    .links { display: flex; align-items: center; gap: 25px; }
+    .links a { color: var(--ink-2); text-decoration: none; font-weight: 650; font-size: .9rem; }
+    .links a:hover { color: var(--green); }
+    .nav-actions { display: flex; gap: 10px; align-items: center; }
+    .lang-btn, .menu-btn {
+      border: 1px solid var(--line); background: var(--white); color: var(--ink);
+      border-radius: 999px; padding: 9px 14px; cursor: pointer; font-weight: 750;
+    }
+    .menu-btn { display: none; padding: 8px 12px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      min-height: 48px; padding: 12px 20px; border: 0; border-radius: 15px;
+      background: var(--green); color: #fff; text-decoration: none; font-weight: 800;
+      box-shadow: 0 10px 24px rgba(12, 139, 123, .18); transition: .2s ease;
+    }
+    .btn:hover { transform: translateY(-2px); background: var(--green-dark); }
+    .btn-outline { background: #fff; color: var(--ink); border: 1px solid var(--line); box-shadow: none; }
+    .btn-outline:hover { background: var(--mint); color: var(--ink); }
+    .hero { padding: 76px 0 66px; overflow: hidden; }
+    .hero-grid { display: grid; grid-template-columns: 1.06fr .94fr; gap: 50px; align-items: center; }
+    .eyebrow { display: inline-flex; gap: 8px; align-items: center; padding: 7px 12px; border: 1px solid #cfe7dc; background: #eff8f3; color: var(--green-dark); border-radius: 999px; font-size: .78rem; font-weight: 800; letter-spacing: .03em; }
+    h1 { margin: 22px 0 18px; max-width: 720px; font-size: clamp(2.7rem, 6vw, 5rem); line-height: 1.02; letter-spacing: -.065em; }
+    h1 em { color: var(--green); font-style: normal; }
+    .hero-copy { max-width: 600px; color: var(--ink-2); font-size: 1.15rem; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 27px 0 19px; }
+    .micro { color: #70827f; font-size: .85rem; }
+    .hero-art { position: relative; min-height: 440px; display: grid; place-items: center; }
+    .glow { position: absolute; width: 390px; height: 390px; border-radius: 50%; background: radial-gradient(circle, #d6efe4 0%, rgba(214,239,228,0) 72%); }
+    .preview-card {
+      position: relative; z-index: 1; width: min(360px, 85%); padding: 20px;
+      border: 1px solid rgba(255,255,255,.9); background: rgba(255,255,255,.84);
+      border-radius: 31px; box-shadow: var(--shadow); transform: rotate(2deg);
+    }
+    .preview-top { display: flex; align-items: center; justify-content: space-between; padding-bottom: 17px; }
+    .preview-name { display: flex; align-items: center; gap: 10px; font-weight: 850; }
+    .preview-name img { width: 39px; height: 39px; border-radius: 13px; }
+    .avatar { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: #f5deeb; color: #a64e79; font-weight: 800; }
+    .today { color: #71817e; font-size: .82rem; font-weight: 700; }
+    .dose {
+      display: flex; align-items: center; gap: 13px; margin: 10px 0; padding: 14px;
+      border: 1px solid var(--line); border-radius: 18px; background: #fff;
+    }
+    .dose-icon { flex: 0 0 42px; width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; background: var(--mint); font-size: 1.2rem; }
+    .dose strong { display: block; font-size: .92rem; }
+    .dose span { display: block; color: var(--ink-2); font-size: .78rem; }
+    .dose-time { margin-left: auto; font-size: .75rem; font-weight: 800; color: var(--green-dark); white-space: nowrap; }
+    .preview-foot { display: flex; justify-content: space-around; padding: 12px 4px 0; color: #79908b; font-size: .72rem; font-weight: 700; }
+    .floating { position: absolute; z-index: 2; padding: 13px 16px; border-radius: 17px; background: #fff; box-shadow: var(--shadow); font-size: .85rem; font-weight: 800; }
+    .float-one { top: 55px; right: 2px; transform: rotate(4deg); }
+    .float-two { bottom: 45px; left: 0; transform: rotate(-4deg); }
+    .trust-row { display: flex; flex-wrap: wrap; gap: 22px; color: #657b76; font-size: .84rem; font-weight: 700; }
+    .trust-row span { display: flex; gap: 7px; align-items: center; }
+    .section { padding: 78px 0; }
+    .section-white { background: #fff; }
+    .section-head { max-width: 710px; margin-bottom: 34px; }
+    .kicker { color: var(--green); font-size: .78rem; font-weight: 850; text-transform: uppercase; letter-spacing: .14em; }
+    h2 { margin: 9px 0 12px; font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.12; letter-spacing: -.05em; }
+    .section-head p { color: var(--ink-2); margin: 0; font-size: 1.04rem; }
+    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 17px; }
+    .feature {
+      padding: 24px; min-height: 224px; background: #fff; border: 1px solid var(--line);
+      border-radius: 22px; transition: .2s ease;
+    }
+    .feature:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+    .feature-icon { width: 49px; height: 49px; display: grid; place-items: center; border-radius: 16px; background: var(--mint); font-size: 1.35rem; }
+    .feature h3 { margin: 17px 0 7px; font-size: 1.12rem; }
+    .feature p { margin: 0; color: var(--ink-2); font-size: .93rem; }
+    .gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .shot { margin: 0; overflow: hidden; border-radius: 23px; border: 1px solid var(--line); background: #fff; }
+    .shot img { width: 100%; aspect-ratio: 1 / .86; object-fit: cover; display: block; background: var(--mint); }
+    .shot figcaption { padding: 14px 16px 17px; }
+    .shot strong { display: block; font-size: .95rem; }
+    .shot span { display: block; color: var(--ink-2); font-size: .83rem; }
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; counter-reset: step; }
+    .step { position: relative; padding: 23px; border-radius: 20px; background: var(--paper); border: 1px solid var(--line); counter-increment: step; }
+    .step::before { content: "0" counter(step); color: var(--green); font-size: .8rem; font-weight: 900; letter-spacing: .1em; }
+    .step h3 { margin: 13px 0 7px; font-size: 1.03rem; }
+    .step p { margin: 0; color: var(--ink-2); font-size: .9rem; }
+    .split { display: grid; grid-template-columns: .9fr 1.1fr; gap: 54px; align-items: center; }
+    .family-visual { position: relative; overflow: hidden; min-height: 390px; display: grid; place-items: center; background: #e9f5ef; border-radius: 30px; }
+    .family-visual img { width: 83%; max-height: 340px; object-fit: contain; }
+    .family-badge { position: absolute; bottom: 20px; right: 18px; background: white; border-radius: 14px; padding: 11px 14px; box-shadow: var(--shadow); font-size: .83rem; font-weight: 800; }
+    .check-list { list-style: none; padding: 0; margin: 23px 0 0; }
+    .check-list li { position: relative; padding: 0 0 14px 32px; color: var(--ink-2); }
+    .check-list li::before { content: "✓"; position: absolute; left: 0; top: 1px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; color: var(--green-dark); background: var(--mint); font-weight: 900; }
+    .note { padding: 19px 21px; margin-top: 19px; border-left: 4px solid var(--orange); border-radius: 0 15px 15px 0; background: #fff8eb; color: #685439; font-size: .9rem; }
+    .security-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .security-card { padding: 23px; border: 1px solid var(--line); border-radius: 20px; background: var(--paper); }
+    .security-card h3 { margin: 0 0 8px; }
+    .security-card p { margin: 0; color: var(--ink-2); font-size: .91rem; }
+    .faq { display: grid; grid-template-columns: .7fr 1.3fr; gap: 55px; }
+    .faq-list details { border-bottom: 1px solid var(--line); padding: 17px 0; }
+    .faq-list summary { cursor: pointer; font-weight: 800; list-style: none; display: flex; justify-content: space-between; gap: 15px; }
+    .faq-list summary::-webkit-details-marker { display: none; }
+    .faq-list summary::after { content: "+"; color: var(--green); font-size: 1.25rem; line-height: 1; }
+    .faq-list details[open] summary::after { content: "−"; }
+    .faq-list details p { margin: 11px 28px 0 0; color: var(--ink-2); font-size: .92rem; }
+    .download { padding: 62px; display: flex; justify-content: space-between; align-items: center; gap: 30px; border-radius: 31px; background: var(--ink); color: #fff; overflow: hidden; position: relative; }
+    .download::after { content: ""; position: absolute; width: 340px; height: 340px; right: 12%; top: -190px; border-radius: 50%; border: 1px solid rgba(255,255,255,.14); box-shadow: 0 0 0 35px rgba(255,255,255,.03), 0 0 0 75px rgba(255,255,255,.025); }
+    .download h2 { position: relative; z-index: 1; max-width: 610px; margin-top: 0; }
+    .download p { position: relative; z-index: 1; color: #c3d8d1; max-width: 650px; margin-bottom: 0; }
+    .download .btn { flex: 0 0 auto; position: relative; z-index: 2; background: var(--orange); color: #203d37; box-shadow: none; }
+    .download-meta { display: block; margin-top: 12px; color: #b7ccc5; font-size: .8rem; }
+    footer { padding: 33px 0; }
+    .footer-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; border-top: 1px solid var(--line); padding-top: 23px; color: var(--ink-2); font-size: .85rem; }
+    .footer-brand { display: flex; gap: 10px; align-items: center; font-weight: 850; color: var(--ink); }
+    .footer-brand img { width: 31px; height: 31px; }
+    .disclaimer { margin: 23px 0 0; color: #778985; font-size: .78rem; }
+    .mobile-download { display: none; }
+    @media (max-width: 900px) {
+      .links { gap: 14px; }
+      .links a { font-size: .82rem; }
+      .hero-grid { gap: 22px; }
+      .feature-grid { grid-template-columns: repeat(2, 1fr); }
+      .gallery { grid-template-columns: repeat(2, 1fr); }
+      .steps { grid-template-columns: repeat(2, 1fr); }
+      .security-grid { grid-template-columns: 1fr; }
+      .download { padding: 42px; }
+    }
+    @media (max-width: 680px) {
+      .wrap { width: min(100% - 30px, 540px); }
+      .nav { min-height: 66px; }
+      .menu-btn { display: inline-flex; }
+      .links { display: none; position: absolute; left: 15px; right: 15px; top: 66px; padding: 14px; background: white; border: 1px solid var(--line); border-radius: 17px; box-shadow: var(--shadow); }
+      .links.open { display: grid; grid-template-columns: 1fr 1fr; }
+      .links a { padding: 8px; }
+      .nav-actions .btn { display: none; }
+      .hero { padding: 49px 0 44px; }
+      .hero-grid, .split, .faq { grid-template-columns: 1fr; }
+      .hero-grid { gap: 4px; }
+      .hero-art { min-height: 370px; }
+      .preview-card { width: min(340px, 88%); }
+      .float-one { right: 0; top: 25px; }
+      .float-two { left: 0; bottom: 20px; }
+      .section { padding: 58px 0; }
+      .feature-grid { gap: 11px; }
+      .feature { min-height: 0; padding: 18px; }
+      .gallery { gap: 10px; }
+      .shot figcaption { padding: 11px; }
+      .steps { gap: 10px; }
+      .step { padding: 17px; }
+      .family-visual { min-height: 300px; }
+      .faq { gap: 12px; }
+      .download { display: block; padding: 30px 24px; }
+      .download .btn { margin-top: 24px; width: 100%; }
+      .footer-row { align-items: flex-start; flex-direction: column; }
+      .mobile-download { display: block; position: fixed; z-index: 18; left: 12px; right: 12px; bottom: 12px; }
+      .mobile-download .btn { width: 100%; min-height: 50px; }
+      footer { padding-bottom: 90px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="#home" aria-label="MediCare home">
+        <img src="assets/medicare-logo.png" alt="">
+        <span>MediCare<small>YOUR HEALTH COMPANION</small></span>
+      </a>
+      <nav class="links" id="site-nav" aria-label="Main navigation">
+        <a href="#features" data-i18n="navFeatures">सुविधाएँ</a>
+        <a href="#how" data-i18n="navHow">कैसे इस्तेमाल करें</a>
+        <a href="#family" data-i18n="navFamily">Family Circle</a>
+        <a href="#faq" data-i18n="navFaq">सवाल-जवाब</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="lang-btn" id="language-toggle" type="button" aria-label="Switch language">EN</button>
+        <a class="btn" href="MediCare-latest.apk" download data-i18n="navDownload">APK डाउनलोड</a>
+        <button class="menu-btn" id="menu-toggle" type="button" aria-label="Open menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="wrap hero-grid">
+        <div>
+          <div class="eyebrow"><span>✦</span><span data-i18n="heroTag">रोज़ की दवा और देखभाल, एक जगह</span></div>
+          <h1 data-i18n="heroTitle">अपनी सेहत की दिनचर्या को <em>आसान</em> बनाएं।</h1>
+          <p class="hero-copy" data-i18n="heroCopy">MediCare दवाओं के समय याद रखने, रोज़ का शेड्यूल देखने और परिवार के साथ देखभाल साझा करने में मदद करता है—सीधे आपके Android फोन पर।</p>
+          <div class="hero-actions">
+            <a class="btn" href="MediCare-latest.apk" download><span>↓</span><span data-i18n="downloadNow">Android APK डाउनलोड करें</span></a>
+            <a class="btn btn-outline" href="#features" data-i18n="explore">सुविधाएँ देखें <span>↘</span></a>
+          </div>
+          <p class="micro" data-i18n="heroNote">Android ऐप • English, हिन्दी और Hinglish • निःशुल्क APK डाउनलोड</p>
+          <div class="trust-row">
+            <span>⏰ <span data-i18n="trust1">समय पर रिमाइंडर</span></span>
+            <span>👨‍👩‍👧 <span data-i18n="trust2">अपनों के साथ देखभाल</span></span>
+            <span>🔒 <span data-i18n="trust3">PIN से ऐप लॉक</span></span>
+          </div>
+        </div>
+        <div class="hero-art" aria-label="MediCare app preview">
+          <div class="glow"></div>
+          <div class="floating float-one">🔔 <span data-i18n="floatReminder">अगली दवा का समय</span></div>
+          <div class="floating float-two">✓ <span data-i18n="floatDone">आज की प्रगति दर्ज करें</span></div>
+          <div class="preview-card">
+            <div class="preview-top">
+              <div class="preview-name"><img src="assets/medicare-logo.png" alt=""><span>MediCare<br><span class="today" data-i18n="previewSubtitle">आज का देखभाल प्लान</span></span></div>
+              <div class="avatar">M</div>
+            </div>
+            <div class="dose"><div class="dose-icon">💊</div><div><strong data-i18n="previewDose1">सुबह की दवा</strong><span data-i18n="previewDoseInfo">आपकी medicine schedule</span></div><div class="dose-time">8:00 AM</div></div>
+            <div class="dose"><div class="dose-icon">💧</div><div><strong data-i18n="previewDose2">दोपहर की दवा</strong><span data-i18n="previewDoseInfo2">समय पर रिमाइंडर</span></div><div class="dose-time">1:00 PM</div></div>
+            <div class="dose"><div class="dose-icon">🌙</div><div><strong data-i18n="previewDose3">रात की दवा</strong><span data-i18n="previewDoseInfo3">ले ली / छोड़ें दर्ज करें</span></div><div class="dose-time">9:00 PM</div></div>
+            <div class="preview-foot"><span data-i18n="tabHome">⌂ Home</span><span data-i18n="tabSchedule">▦ Schedule</span><span data-i18n="tabProgress">⌁ Progress</span><span data-i18n="tabProfile">☺ Profile</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-white" id="features">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="kicker" data-i18n="featuresKicker">आपकी दिनचर्या के लिए</div>
+          <h2 data-i18n="featuresTitle">दवा याद रखने से लेकर परिवार की देखभाल तक।</h2>
+          <p data-i18n="featuresIntro">हर दिन को थोड़ा व्यवस्थित रखने के लिए ज़रूरी टूल—साफ़, आसान और आपकी भाषा में।</p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature"><div class="feature-icon">⏰</div><h3 data-i18n="f1Title">दवा के रिमाइंडर</h3><p data-i18n="f1Copy">दवा का नाम, समय और दोहराव जोड़ें। फोन पर समय से अलर्ट पाएं और ली गई या छूटी हुई खुराक दर्ज करें।</p></article>
+          <article class="feature"><div class="feature-icon">🗓️</div><h3 data-i18n="f2Title">Schedule और आज की सूची</h3><p data-i18n="f2Copy">अपनी medicines को शेड्यूल में देखें। दिनभर की दवाएँ और उनके समय एक ही जगह पर मिलते हैं।</p></article>
+          <article class="feature"><div class="feature-icon">📈</div><h3 data-i18n="f3Title">Progress और dose history</h3><p data-i18n="f3Copy">दवा लेने की स्थिति दर्ज करें और अपनी हाल की dose history व प्रगति पर नज़र रखें।</p></article>
+          <article class="feature"><div class="feature-icon">👨‍👩‍👧</div><h3 data-i18n="f4Title">Family Circle</h3><p data-i18n="f4Copy">परिवार या भरोसेमंद देखभाल करने वालों को आमंत्रित करें। सदस्य अनुरोध approve करें और चुनी गई जानकारी साझा करें।</p></article>
+          <article class="feature"><div class="feature-icon">🔐</div><h3 data-i18n="f5Title">ऐप लॉक और privacy controls</h3><p data-i18n="f5Copy">ऐप खोलने के लिए PIN लॉक लगाएं। Profile और Family Circle में क्या साझा हो, उसे अपनी पसंद से नियंत्रित करें।</p></article>
+          <article class="feature"><div class="feature-icon">🌐</div><h3 data-i18n="f6Title">तीन भाषाएँ</h3><p data-i18n="f6Copy">English, हिन्दी या Hinglish चुनें। ऐप की भाषा सेटिंग से कभी भी बदल सकते हैं।</p></article>
+          <article class="feature"><div class="feature-icon">🎁</div><h3 data-i18n="f7Title">Referral gifts</h3><p data-i18n="f7Copy">अपना referral code साझा करें। पात्र referral और उपलब्ध gift stock होने पर gift card referrer को assign हो सकता है।</p></article>
+          <article class="feature"><div class="feature-icon">📚</div><h3 data-i18n="f8Title">Medicine guide</h3><p data-i18n="f8Copy">ऐप के medicine guide में सामान्य जानकारी और निर्देश देखें। अपनी दवा के लिए डॉक्टर या pharmacist की सलाह प्राथमिक रखें।</p></article>
+          <article class="feature"><div class="feature-icon">⚙️</div><h3 data-i18n="f9Title">Reminder preferences</h3><p data-i18n="f9Copy">रिमाइंडर की आवाज़ और quiet hours जैसी preferences सेट करें। सही alerts के लिए Android permissions चालू रखें।</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="kicker" data-i18n="galleryKicker">एक नज़र में</div>
+          <h2 data-i18n="galleryTitle">देखभाल की दिनचर्या, सरल तरीके से।</h2>
+          <p data-i18n="galleryIntro">MediCare की onboarding illustrations—रिमाइंडर, दवा और परिवार की देखभाल के मुख्य विचार।</p>
+        </div>
+        <div class="gallery">
+          <figure class="shot"><img src="assets/daily-calendar.png" alt="MediCare daily calendar illustration"><figcaption><strong data-i18n="shot1Title">अपना दिन व्यवस्थित करें</strong><span data-i18n="shot1Copy">दिन और समय के अनुसार reminders</span></figcaption></figure>
+          <figure class="shot"><img src="assets/medication-bottles.png" alt="Medicine bottles illustration"><figcaption><strong data-i18n="shot2Title">अपनी medicines जोड़ें</strong><span data-i18n="shot2Copy">नाम और schedule संभालें</span></figcaption></figure>
+          <figure class="shot"><img src="assets/reminder-bell.png" alt="Reminder bell illustration"><figcaption><strong data-i18n="shot3Title">समय पर याद दिलाना</strong><span data-i18n="shot3Copy">Android अलर्ट के साथ</span></figcaption></figure>
+          <figure class="shot"><img src="assets/family-care.png" alt="Family care illustration"><figcaption><strong data-i18n="shot4Title">देखभाल साझा करें</strong><span data-i18n="shot4Copy">अपने भरोसेमंद लोगों के साथ</span></figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-white" id="how">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="kicker" data-i18n="howKicker">शुरू करना आसान है</div>
+          <h2 data-i18n="howTitle">पहली बार इस्तेमाल करने के चरण।</h2>
+          <p data-i18n="howIntro">ऐप install करने के बाद अपनी ज़रूरत के अनुसार profile और reminders सेट करें।</p>
+        </div>
+        <div class="steps">
+          <article class="step"><h3 data-i18n="step1Title">ऐप डाउनलोड और install करें</h3><p data-i18n="step1Copy">नीचे दिए APK को Android फोन में डाउनलोड करें। फ़ाइल खोलकर install करें; Android पूछे तो इस फ़ाइल के लिए install की अनुमति दें।</p></article>
+          <article class="step"><h3 data-i18n="step2Title">भाषा और account चुनें</h3><p data-i18n="step2Copy">English, हिन्दी या Hinglish चुनें। Email/password या उपलब्ध Google sign-in से अपने account में जाएँ।</p></article>
+          <article class="step"><h3 data-i18n="step3Title">दवा और समय जोड़ें</h3><p data-i18n="step3Copy">Add medicine खोलें, दवा का नाम और reminder time भरें। ज़रूरत के अनुसार दिन और समय दोबारा जांचें।</p></article>
+          <article class="step"><h3 data-i18n="step4Title">Notifications चालू रखें</h3><p data-i18n="step4Copy">Notification और exact alarm permission दें। फोन की battery/background settings भी जांचें ताकि alerts रुकें नहीं।</p></article>
+        </div>
+        <div class="note" data-i18n="setupNote">महत्वपूर्ण: Android के version और phone brand के अनुसार permissions के नाम अलग हो सकते हैं। Do Not Disturb, battery saver या force-stop alerts को प्रभावित कर सकते हैं।</div>
+      </div>
+    </section>
+
+    <section class="section" id="family">
+      <div class="wrap split">
+        <div class="family-visual">
+          <img src="assets/family-care.png" alt="Family Circle care illustration">
+          <div class="family-badge" data-i18n="familyBadge">अपनों के साथ, आपकी अनुमति से</div>
+        </div>
+        <div>
+          <div class="kicker" data-i18n="familyKicker">Family Circle</div>
+          <h2 data-i18n="familyTitle">भरोसेमंद लोगों को अपनी देखभाल में शामिल करें।</h2>
+          <p class="hero-copy" data-i18n="familyIntro">Family Circle में एक circle बनाएं या invite code से जुड़ें। Admin join requests approve कर सकता है और सदस्य अपनी sharing preferences चुन सकते हैं।</p>
+          <ul class="check-list">
+            <li data-i18n="family1">Circle invite code साझा करके परिवार को आमंत्रित करें।</li>
+            <li data-i18n="family2">Dose status और समय साझा करने की setting अलग से नियंत्रित करें।</li>
+            <li data-i18n="family3">Medicine के नाम साझा करना अलग opt-in है; इसे बंद रख सकते हैं।</li>
+            <li data-i18n="family4">साझा schedule और आज के updates circle में देखे जा सकते हैं।</li>
+          </ul>
+          <div class="note" data-i18n="familyNote">Family features को sync करने के लिए internet और account sign-in चाहिए। केवल उन्हीं लोगों को जोड़ें जिन पर आप भरोसा करते हैं।</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-white">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="kicker" data-i18n="privacyKicker">आपका नियंत्रण</div>
+          <h2 data-i18n="privacyTitle">साझा करने से पहले, अपनी settings देखें।</h2>
+          <p data-i18n="privacyIntro">MediCare में account, device और optional family features शामिल हैं। अपना फोन सुरक्षित रखें और sharing preferences समझकर चुनें।</p>
+        </div>
+        <div class="security-grid">
+          <article class="security-card"><h3 data-i18n="privacy1Title">App PIN</h3><p data-i18n="privacy1Copy">Profile → Privacy & security में app lock चालू करें। PIN भूलने पर “Forgot PIN?” से इस device का app PIN हटाकर sign out किया जा सकता है; फिर account credentials से sign in करना होगा।</p></article>
+          <article class="security-card"><h3 data-i18n="privacy2Title">Family sharing</h3><p data-i18n="privacy2Copy">Circle में शामिल होने से पहले invite और sharing options जांचें। Medicine names और dose updates की sharing choices को अलग रखें।</p></article>
+          <article class="security-card"><h3 data-i18n="privacy3Title">Referral rewards</h3><p data-i18n="privacy3Copy">Referral code इस्तेमाल होने पर gift, अगर stock उपलब्ध और assignment सफल हो, code के owner/referrer को मिलता है। Gift card number और PIN निजी रखें।</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="wrap faq">
+        <div class="section-head">
+          <div class="kicker" data-i18n="faqKicker">मदद चाहिए?</div>
+          <h2 data-i18n="faqTitle">आम सवाल।</h2>
+          <p data-i18n="faqIntro">इंस्टॉल, alerts और sharing के बारे में जल्दी जवाब।</p>
+        </div>
+        <div class="faq-list">
+          <details><summary data-i18n="q1">रिमाइंडर नहीं आ रहा—क्या जांचूँ?</summary><p data-i18n="a1">MediCare की notification और exact alarm permissions जांचें। Battery optimization/background limits और Do Not Disturb settings भी देखें। Phone restart के बाद app खोलकर schedule verify करें।</p></details>
+          <details><summary data-i18n="q2">क्या MediCare मेरी दवा की सलाह देता है?</summary><p data-i18n="a2">नहीं। ऐप reminders और tracking में मदद के लिए है। Dose, दवा बदलने या उपचार के फैसले डॉक्टर या pharmacist से पूछें।</p></details>
+          <details><summary data-i18n="q3">क्या referral इस्तेमाल करने वाले को gift मिलता है?</summary><p data-i18n="a3">इस referral व्यवस्था में gift card code share करने वाले referrer को assign हो सकता है—यदि referral पात्र हो, gift stock उपलब्ध हो और assignment sync हो जाए। Reward की गारंटी नहीं है।</p></details>
+          <details><summary data-i18n="q4">Family Circle में क्या साझा होता है?</summary><p data-i18n="a4">Circle के active members को चुनी गई dose status/time updates दिख सकते हैं। Medicine names अलग opt-in हैं। Join request और sharing settings को ध्यान से देखें।</p></details>
+          <details><summary data-i18n="q5">क्या यह APK iPhone पर चलेगा?</summary><p data-i18n="a5">यह डाउनलोड Android APK है और iPhone पर install नहीं होता।</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="download">
+      <div class="wrap">
+        <div class="download">
+          <div>
+            <div class="kicker" style="color:#9edbca" data-i18n="downloadKicker">आज से शुरू करें</div>
+            <h2 data-i18n="downloadTitle">MediCare अपने Android फोन पर लें।</h2>
+            <p data-i18n="downloadCopy">नीचे दिए बटन से current APK डाउनलोड करें। Install करने के बाद notification और alarm permissions चालू करना न भूलें।</p>
+            <span class="download-meta" data-i18n="downloadMeta">Android APK • फ़ाइल का आकार लगभग 60 MB • Build: 24 Nov 2026</span>
+          </div>
+          <a class="btn" href="MediCare-latest.apk" download><span>↓</span><span data-i18n="downloadButton">APK डाउनलोड करें</span></a>
+        </div>
+        <p class="disclaimer" data-i18n="disclaimer">MediCare एक medication reminder और care-organization app है; यह डॉक्टर, pharmacist, medical diagnosis या emergency service का विकल्प नहीं है। दवा की खुराक और उपचार के लिए अपने healthcare professional की सलाह मानें। Reminder delivery फोन की settings, permissions और connectivity पर निर्भर करती है।</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="footer-row">
+        <div class="footer-brand"><img src="assets/medicare-logo.png" alt=""> MediCare</div>
+        <span data-i18n="footerLine">आपकी सेहत की दिनचर्या को व्यवस्थित रखने में मदद।</span>
+        <a href="#home" data-i18n="backTop">ऊपर जाएँ ↑</a>
+      </div>
+      <p class="disclaimer" data-i18n="footerNote">इस वेबसाइट पर दिया गया APK और जानकारी MediCare ऐप के उपयोग के लिए है। APK को केवल भरोसेमंद स्रोत से डाउनलोड करें।</p>
+    </div>
+  </footer>
+  <div class="mobile-download"><a class="btn" href="MediCare-latest.apk" download>↓ <span data-i18n="downloadButton">APK डाउनलोड करें</span></a></div>
+
+  <script>
+    const english = {
+      navFeatures:"Features", navHow:"How to use", navFamily:"Family Circle", navFaq:"FAQ", navDownload:"Download APK",
+      heroTag:"Daily medicines and care, in one place", heroTitle:"Make your health routine <em>easier.</em>",
+      heroCopy:"MediCare helps you remember medicine times, view your daily schedule and share care with family—right from your Android phone.",
+      downloadNow:"Download Android APK", explore:"Explore features", heroNote:"Android app • English, Hindi and Hinglish • APK download",
+      trust1:"Timely reminders", trust2:"Care with family", trust3:"PIN app lock", floatReminder:"Next medicine reminder", floatDone:"Track today's progress",
+      previewSubtitle:"Today's care plan", previewDose1:"Morning medicine", previewDoseInfo:"Your medicine schedule", previewDose2:"Afternoon medicine", previewDoseInfo2:"A timely reminder", previewDose3:"Evening medicine", previewDoseInfo3:"Mark taken or skipped",
+      tabHome:"⌂ Home", tabSchedule:"▦ Schedule", tabProgress:"⌁ Progress", tabProfile:"☺ Profile",
+      featuresKicker:"For your daily routine", featuresTitle:"From remembering medicines to caring together.", featuresIntro:"Helpful tools to keep each day organized—clear, simple and available in your language.",
+      f1Title:"Medicine reminders", f1Copy:"Add a medicine name, time and repeat schedule. Get alerts on your phone and record a dose as taken or missed.",
+      f2Title:"Schedule and today's list", f2Copy:"View your medicines in a schedule. See the day's medicines and their times in one place.",
+      f3Title:"Progress and dose history", f3Copy:"Record medicine status and keep an eye on recent dose history and progress.",
+      f4Title:"Family Circle", f4Copy:"Invite family or trusted caregivers. Members approve join requests and choose what information to share.",
+      f5Title:"App lock and privacy controls", f5Copy:"Set a PIN to open the app. Choose what to share through your profile and Family Circle settings.",
+      f6Title:"Three languages", f6Copy:"Choose English, Hindi or Hinglish. Change the app language from settings at any time.",
+      f7Title:"Referral gifts", f7Copy:"Share your referral code. A gift card may be assigned to the referrer for an eligible referral when stock is available.",
+      f8Title:"Medicine guide", f8Copy:"Read general information and instructions in the app's medicine guide. Follow your doctor or pharmacist for personal advice.",
+      f9Title:"Reminder preferences", f9Copy:"Set preferences such as reminder sound and quiet hours. Keep Android permissions enabled for alerts.",
+      galleryKicker:"A quick look", galleryTitle:"A simpler way to organize care.", galleryIntro:"MediCare onboarding illustrations for reminders, medicines and family care.",
+      shot1Title:"Organize your day", shot1Copy:"Reminders by day and time", shot2Title:"Add your medicines", shot2Copy:"Keep names and schedules together", shot3Title:"Remember on time", shot3Copy:"With Android alerts", shot4Title:"Share care", shot4Copy:"With people you trust",
+      howKicker:"Easy to get started", howTitle:"Your first steps with the app.", howIntro:"After installation, set up your profile and reminders to fit your routine.",
+      step1Title:"Download and install", step1Copy:"Download the APK below on your Android phone. Open the file to install; if Android asks, allow installs for this file.",
+      step2Title:"Choose language and sign in", step2Copy:"Choose English, Hindi or Hinglish. Sign in with email/password or the available Google sign-in.",
+      step3Title:"Add a medicine and time", step3Copy:"Open Add medicine, enter the medicine name and reminder time. Review the days and times you selected.",
+      step4Title:"Allow notifications", step4Copy:"Grant notification and exact alarm permissions. Review phone battery and background settings so alerts can run.",
+      setupNote:"Important: Permission names vary by Android version and phone brand. Do Not Disturb, battery saver or force-stop may affect alerts.",
+      familyBadge:"With your permission", familyKicker:"Family Circle", familyTitle:"Include trusted people in your care routine.",
+      familyIntro:"Create a Family Circle or join with an invite code. An admin can approve join requests, and members choose their sharing preferences.",
+      family1:"Invite family by sharing the circle invite code.", family2:"Control sharing of dose status and time separately.", family3:"Medicine-name sharing is a separate opt-in and can stay off.", family4:"View shared schedules and today's updates in the circle.",
+      familyNote:"Family features need an internet connection and a signed-in account to sync. Invite only people you trust.",
+      privacyKicker:"You are in control", privacyTitle:"Review your settings before sharing.", privacyIntro:"MediCare includes account, device and optional family features. Secure your phone and choose sharing preferences carefully.",
+      privacy1Title:"App PIN", privacy1Copy:"Enable app lock in Profile → Privacy & security. If you forget the PIN, “Forgot PIN?” can clear this device's app PIN and sign you out; sign in again with your account credentials.",
+      privacy2Title:"Family sharing", privacy2Copy:"Review the invitation and sharing options before joining a circle. Keep medicine-name and dose-update choices distinct.",
+      privacy3Title:"Referral rewards", privacy3Copy:"When a referral code is used, a gift—if stock is available and assignment succeeds—goes to the code owner/referrer. Keep gift-card numbers and PINs private.",
+      faqKicker:"Need help?", faqTitle:"Frequently asked questions.", faqIntro:"Quick answers about installation, alerts and sharing.",
+      q1:"My reminder did not arrive—what should I check?", a1:"Check MediCare's notification and exact alarm permissions. Review battery optimization/background limits and Do Not Disturb. Reopen the app after restarting your phone and verify the schedule.",
+      q2:"Does MediCare give medical advice?", a2:"No. The app helps with reminders and tracking. Ask your doctor or pharmacist about doses, changing medicines or treatment decisions.",
+      q3:"Does the person using a referral code get a gift?", a3:"In this referral setup, a gift card may be assigned to the referrer who shared the code—if the referral is eligible, stock is available and assignment syncs. A reward is not guaranteed.",
+      q4:"What is shared in Family Circle?", a4:"Active circle members may see selected dose status/time updates. Medicine names are a separate opt-in. Review join requests and sharing settings carefully.",
+      q5:"Will this APK work on iPhone?", a5:"This download is an Android APK and cannot be installed on iPhone.",
+      downloadKicker:"Get started today", downloadTitle:"Get MediCare on your Android phone.", downloadCopy:"Download the current APK using the button. After installation, remember to allow notification and alarm permissions.",
+      downloadMeta:"Android APK • Approximately 60 MB • Build: 24 Nov 2026", downloadButton:"Download APK",
+      disclaimer:"MediCare is a medication reminder and care-organization app; it is not a substitute for a doctor, pharmacist, medical diagnosis or emergency service. Follow your healthcare professional's advice for medicines and treatment. Reminder delivery depends on phone settings, permissions and connectivity.",
+      footerLine:"Helping you organize your health routine.", backTop:"Back to top ↑", footerNote:"The APK and information on this website are for using the MediCare app. Download APKs only from trusted sources."
+    };
+    const hindi = {
+      navFeatures:"सुविधाएँ", navHow:"कैसे इस्तेमाल करें", navFamily:"Family Circle", navFaq:"सवाल-जवाब", navDownload:"APK डाउनलोड",
+      heroTag:"रोज़ की दवा और देखभाल, एक जगह", heroTitle:"अपनी सेहत की दिनचर्या को <em>आसान</em> बनाएं।",
+      heroCopy:"MediCare दवाओं के समय याद रखने, रोज़ का शेड्यूल देखने और परिवार के साथ देखभाल साझा करने में मदद करता है—सीधे आपके Android फोन पर।",
+      downloadNow:"Android APK डाउनलोड करें", explore:"सुविधाएँ देखें", heroNote:"Android ऐप • English, हिन्दी और Hinglish • निःशुल्क APK डाउनलोड",
+      trust1:"समय पर रिमाइंडर", trust2:"अपनों के साथ देखभाल", trust3:"PIN से ऐप लॉक", floatReminder:"अगली दवा का समय", floatDone:"आज की प्रगति दर्ज करें",
+      previewSubtitle:"आज का देखभाल प्लान", previewDose1:"सुबह की दवा", previewDoseInfo:"आपकी medicine schedule", previewDose2:"दोपहर की दवा", previewDoseInfo2:"समय पर रिमाइंडर", previewDose3:"रात की दवा", previewDoseInfo3:"ले ली / छोड़ें दर्ज करें",
+      tabHome:"⌂ Home", tabSchedule:"▦ Schedule", tabProgress:"⌁ Progress", tabProfile:"☺ Profile",
+      featuresKicker:"आपकी दिनचर्या के लिए", featuresTitle:"दवा याद रखने से लेकर परिवार की देखभाल तक।", featuresIntro:"हर दिन को थोड़ा व्यवस्थित रखने के लिए ज़रूरी टूल—साफ़, आसान और आपकी भाषा में।",
+      f1Title:"दवा के रिमाइंडर", f1Copy:"दवा का नाम, समय और दोहराव जोड़ें। फोन पर समय से अलर्ट पाएं और ली गई या छूटी हुई खुराक दर्ज करें।",
+      f2Title:"Schedule और आज की सूची", f2Copy:"अपनी medicines को शेड्यूल में देखें। दिनभर की दवाएँ और उनके समय एक ही जगह पर मिलते हैं।",
+      f3Title:"Progress और dose history", f3Copy:"दवा लेने की स्थिति दर्ज करें और अपनी हाल की dose history व प्रगति पर नज़र रखें।",
+      f4Title:"Family Circle", f4Copy:"परिवार या भरोसेमंद देखभाल करने वालों को आमंत्रित करें। सदस्य अनुरोध approve करें और चुनी गई जानकारी साझा करें।",
+      f5Title:"ऐप लॉक और privacy controls", f5Copy:"ऐप खोलने के लिए PIN लॉक लगाएं। Profile और Family Circle में क्या साझा हो, उसे अपनी पसंद से नियंत्रित करें।",
+      f6Title:"तीन भाषाएँ", f6Copy:"English, हिन्दी या Hinglish चुनें। ऐप की भाषा सेटिंग से कभी भी बदल सकते हैं।",
+      f7Title:"Referral gifts", f7Copy:"अपना referral code साझा करें। पात्र referral और उपलब्ध gift stock होने पर gift card referrer को assign हो सकता है।",
+      f8Title:"Medicine guide", f8Copy:"ऐप के medicine guide में सामान्य जानकारी और निर्देश देखें। अपनी दवा के लिए डॉक्टर या pharmacist की सलाह प्राथमिक रखें।",
+      f9Title:"Reminder preferences", f9Copy:"रिमाइंडर की आवाज़ और quiet hours जैसी preferences सेट करें। सही alerts के लिए Android permissions चालू रखें।",
+      galleryKicker:"एक नज़र में", galleryTitle:"देखभाल की दिनचर्या, सरल तरीके से।", galleryIntro:"MediCare की onboarding illustrations—रिमाइंडर, दवा और परिवार की देखभाल के मुख्य विचार।",
+      shot1Title:"अपना दिन व्यवस्थित करें", shot1Copy:"दिन और समय के अनुसार reminders", shot2Title:"अपनी medicines जोड़ें", shot2Copy:"नाम और schedule संभालें", shot3Title:"समय पर याद दिलाना", shot3Copy:"Android अलर्ट के साथ", shot4Title:"देखभाल साझा करें", shot4Copy:"अपने भरोसेमंद लोगों के साथ",
+      howKicker:"शुरू करना आसान है", howTitle:"पहली बार इस्तेमाल करने के चरण।", howIntro:"ऐप install करने के बाद अपनी ज़रूरत के अनुसार profile और reminders सेट करें।",
+      step1Title:"ऐप डाउनलोड और install करें", step1Copy:"नीचे दिए APK को Android फोन में डाउनलोड करें। फ़ाइल खोलकर install करें; Android पूछे तो इस फ़ाइल के लिए install की अनुमति दें।",
+      step2Title:"भाषा और account चुनें", step2Copy:"English, हिन्दी या Hinglish चुनें। Email/password या उपलब्ध Google sign-in से अपने account में जाएँ।",
+      step3Title:"दवा और समय जोड़ें", step3Copy:"Add medicine खोलें, दवा का नाम और reminder time भरें। ज़रूरत के अनुसार दिन और समय दोबारा जांचें।",
+      step4Title:"Notifications चालू रखें", step4Copy:"Notification और exact alarm permission दें। फोन की battery/background settings भी जांचें ताकि alerts रुकें नहीं।",
+      setupNote:"महत्वपूर्ण: Android के version और phone brand के अनुसार permissions के नाम अलग हो सकते हैं। Do Not Disturb, battery saver या force-stop alerts को प्रभावित कर सकते हैं।",
+      familyBadge:"अपनों के साथ, आपकी अनुमति से", familyKicker:"Family Circle", familyTitle:"भरोसेमंद लोगों को अपनी देखभाल में शामिल करें।",
+      familyIntro:"Family Circle में एक circle बनाएं या invite code से जुड़ें। Admin join requests approve कर सकता है और सदस्य अपनी sharing preferences चुन सकते हैं।",
+      family1:"Circle invite code साझा करके परिवार को आमंत्रित करें।", family2:"Dose status और समय साझा करने की setting अलग से नियंत्रित करें।", family3:"Medicine के नाम साझा करना अलग opt-in है; इसे बंद रख सकते हैं।", family4:"साझा schedule और आज के updates circle में देखे जा सकते हैं।",
+      familyNote:"Family features को sync करने के लिए internet और account sign-in चाहिए। केवल उन्हीं लोगों को जोड़ें जिन पर आप भरोसा करते हैं।",
+      privacyKicker:"आपका नियंत्रण", privacyTitle:"साझा करने से पहले, अपनी settings देखें।", privacyIntro:"MediCare में account, device और optional family features शामिल हैं। अपना फोन सुरक्षित रखें और sharing preferences समझकर चुनें।",
+      privacy1Title:"App PIN", privacy1Copy:"Profile → Privacy & security में app lock चालू करें। PIN भूलने पर “Forgot PIN?” से इस device का app PIN हटाकर sign out किया जा सकता है; फिर account credentials से sign in करना होगा।",
+      privacy2Title:"Family sharing", privacy2Copy:"Circle में शामिल होने से पहले invite और sharing options जांचें। Medicine names और dose updates की sharing choices को अलग रखें।",
+      privacy3Title:"Referral rewards", privacy3Copy:"Referral code इस्तेमाल होने पर gift, अगर stock उपलब्ध और assignment सफल हो, code के owner/referrer को मिलता है। Gift card number और PIN निजी रखें।",
+      faqKicker:"मदद चाहिए?", faqTitle:"आम सवाल।", faqIntro:"इंस्टॉल, alerts और sharing के बारे में जल्दी जवाब।",
+      q1:"रिमाइंडर नहीं आ रहा—क्या जांचूँ?", a1:"MediCare की notification और exact alarm permissions जांचें। Battery optimization/background limits और Do Not Disturb settings भी देखें। Phone restart के बाद app खोलकर schedule verify करें।",
+      q2:"क्या MediCare मेरी दवा की सलाह देता है?", a2:"नहीं। ऐप reminders और tracking में मदद के लिए है। Dose, दवा बदलने या उपचार के फैसले डॉक्टर या pharmacist से पूछें।",
+      q3:"क्या referral इस्तेमाल करने वाले को gift मिलता है?", a3:"इस referral व्यवस्था में gift card code share करने वाले referrer को assign हो सकता है—यदि referral पात्र हो, gift stock उपलब्ध हो और assignment sync हो जाए। Reward की गारंटी नहीं है।",
+      q4:"Family Circle में क्या साझा होता है?", a4:"Circle के active members को चुनी गई dose status/time updates दिख सकते हैं। Medicine names अलग opt-in हैं। Join request और sharing settings को ध्यान से देखें।",
+      q5:"क्या यह APK iPhone पर चलेगा?", a5:"यह डाउनलोड Android APK है और iPhone पर install नहीं होता।",
+      downloadKicker:"आज से शुरू करें", downloadTitle:"MediCare अपने Android फोन पर लें।", downloadCopy:"नीचे दिए बटन से current APK डाउनलोड करें। Install करने के बाद notification और alarm permissions चालू करना न भूलें।",
+      downloadMeta:"Android APK • फ़ाइल का आकार लगभग 60 MB • Build: 24 Nov 2026", downloadButton:"APK डाउनलोड करें",
+      disclaimer:"MediCare एक medication reminder और care-organization app है; यह डॉक्टर, pharmacist, medical diagnosis या emergency service का विकल्प नहीं है। दवा की खुराक और उपचार के लिए अपने healthcare professional की सलाह मानें। Reminder delivery फोन की settings, permissions और connectivity पर निर्भर करती है।",
+      footerLine:"आपकी सेहत की दिनचर्या को व्यवस्थित रखने में मदद।", backTop:"ऊपर जाएँ ↑", footerNote:"इस वेबसाइट पर दिया गया APK और जानकारी MediCare ऐप के उपयोग के लिए है। APK को केवल भरोसेमंद स्रोत से डाउनलोड करें।"
+    };
+    let language = "hi";
+    function setLanguage(next) {
+      language = next;
+      document.documentElement.lang = next;
+      const copy = next === "en" ? english : hindi;
+      document.querySelectorAll("[data-i18n]").forEach((node) => {
+        const key = node.dataset.i18n;
+        if (copy[key]) node.innerHTML = copy[key];
+      });
+      document.getElementById("language-toggle").textContent = next === "hi" ? "EN" : "हि";
+      document.title = next === "hi" ? "MediCare — आपकी सेहत का साथी" : "MediCare — Your Health Companion";
+      document.querySelector('meta[name="description"]').content = next === "hi"
+        ? "MediCare — दवा के समय, परिवार की देखभाल और रोज़ की सेहत को व्यवस्थित रखने वाला आपका health companion."
+        : "MediCare helps you organize medicine reminders, daily schedules and family care on Android.";
+    }
+    document.getElementById("language-toggle").addEventListener("click", () => setLanguage(language === "hi" ? "en" : "hi"));
+    document.getElementById("menu-toggle").addEventListener("click", () => document.getElementById("site-nav").classList.toggle("open"));
+    document.querySelectorAll("#site-nav a").forEach((link) => link.addEventListener("click", () => document.getElementById("site-nav").classList.remove("open")));
+    setLanguage("hi");
+  </script>
+</body>
+</html>
